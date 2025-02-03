@@ -41,6 +41,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'nom_produit' => $nom_produit,
                 'quantite_vendue' => $quantite_vendue
             ]);
+
+            // Enregistrer dans l'historique
+            $historique_query = $connexion->prepare("INSERT INTO historique (type_mouvement, nom_produit, quantite) VALUES ('vente', :nom_produit, :quantite_vendue)");
+            $historique_query->execute([
+                'nom_produit' => $nom_produit,
+                'quantite_vendue' => $quantite_vendue
+            ]);
+
             $message = "Vente enregistrée avec succès.";
             // Redirection vers la page d'accueil après l'enregistrement
             header('Location: acceuil.php');

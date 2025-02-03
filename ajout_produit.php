@@ -23,6 +23,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'nom_produit' => $nom_produit,
             'quantite' => $quantite
         ]);
+
+        // Enregistrer dans l'historique
+        $historique_query = $connexion->prepare("INSERT INTO historique (type_mouvement, nom_produit, quantite) VALUES ('ajout', :nom_produit, :quantite)");
+        $historique_query->execute([
+            'nom_produit' => $nom_produit,
+            'quantite' => $quantite
+        ]);
+
         header('Location: acceuil.php');
         exit();
     } catch(PDOException $e) {

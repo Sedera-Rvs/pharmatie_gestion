@@ -17,6 +17,18 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
 
 if ($id) {
     try {
+        $query = $connexion->prepare("SELECT nom_produit, quantite FROM produit WHERE id = ?");
+        $query->execute([$id]);
+        $produit = $query->fetch();
+
+        if ($produit) {
+            $historique_query = $connexion->prepare("INSERT INTO historique (type_mouvement, nom_produit, quantite) VALUES ('suppression', :nom_produit, :quantite)");
+            $historique_query->execute([
+                'nom_produit' => $produit['nom_produit'],
+                'quantite' => $produit['quantite']
+            ]);
+        }
+
         $query = $connexion->prepare("DELETE FROM produit WHERE id = ?");
         $query->execute([$id]);
     } catch(PDOException $e) {

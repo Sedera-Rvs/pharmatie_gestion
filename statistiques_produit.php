@@ -21,9 +21,34 @@ if (!$nom_produit) {
 }
 
 // Récupération des statistiques de vente pour le produit
-$stats_query = $connexion->prepare("SELECT SUM(quantite_vendue) as total_vendu, DATE(date_vente) as date_vente FROM ventes WHERE nom_produit = ? GROUP BY DATE(date_vente)");
-$stats_query->execute([$nom_produit]);
+$stats_query = $connexion->prepare("
+    SELECT 
+        DATE(date_vente) as date_vente,
+        SUM(quantite_vendue) as total_vendu
+    FROM ventes 
+    WHERE nom_produit = :nom_produit 
+    GROUP BY DATE(date_vente)
+    ORDER BY DATE(date_vente)
+");
+$stats_query->execute(['nom_produit' => $nom_produit]);
 $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
+
+// Calcul du reste de produit après chaque vente
+$reste_produit = $connexion->prepare("SELECT quantite FROM produit WHERE nom_produit = :nom_produit");
+$reste_produit->execute(['nom_produit' => $nom_produit]);
+$quantite_initiale = $reste_produit->fetchColumn();
+
+foreach ($stats as &$stat) {
+    $quantite_initiale -= $stat['total_vendu'];
+    $stat['reste_produit'] = $quantite_initiale;
+}
+
+// Assurez-vous que le reste de produit ne devient pas négatif
+foreach ($stats as &$stat) {
+    if ($stat['reste_produit'] < 0) {
+        $stat['reste_produit'] = 0;
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +92,13 @@ $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
                         data: <?php echo json_encode(array_map(function($stat) { return $stat['total_vendu']; }, $stats)); ?>,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Reste de produit',
+                        data: <?php echo json_encode(array_map(function($stat) { return $stat['reste_produit']; }, $stats)); ?>,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 1
                     }
                 ]

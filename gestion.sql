@@ -102,6 +102,21 @@ INSERT INTO `ventes` (`id`, `nom_produit`, `quantite_vendue`, `date_vente`) VALU
 (1, 'efferalgant', 25, '2025-01-26 22:48:28'),
 (2, 'doliprane', 22, '2025-01-26 22:49:50');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `historique`
+--
+
+CREATE TABLE `historique` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type_mouvement` varchar(50) NOT NULL,
+  `nom_produit` varchar(100) NOT NULL,
+  `quantite` int(11) NOT NULL,
+  `date_mouvement` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Indexes for dumped tables
 --

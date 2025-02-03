@@ -103,6 +103,11 @@ $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
         .btn-statistics {
             background-color: #ff9800; /* Couleur pour le bouton de statistiques */
         }
+
+        .alert {
+            color: red;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -119,6 +124,7 @@ $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
             <!-- Interface Administrateur -->
             <div>
                 <a href="ajout_produit.php" class="btn btn-add">Ajouter un produit</a>
+                <a href="historique.php" class="btn btn-add">Historique des produits</a>
             </div>
             <table>
                 <thead>
@@ -133,7 +139,12 @@ $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($produits as $produit): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($produit['nom_produit']); ?></td>
-                        <td><?php echo htmlspecialchars($produit['quantite']); ?></td>
+                        <td>
+                            <?php echo htmlspecialchars($produit['quantite']); ?>
+                            <?php if ($produit['quantite'] <= 5): ?>
+                                <span class="alert">Stock faible!</span>
+                            <?php endif; ?>
+                        </td>
                         <td><?php echo htmlspecialchars($produit['date_ajout']); ?></td>
                         <td>
                             <a href="modifier_produit.php?id=<?php echo $produit['id']; ?>" class="btn btn-edit">Modifier</a>
