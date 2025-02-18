@@ -149,6 +149,7 @@ $stats = $stats_query->fetchAll(PDO::FETCH_ASSOC);
                         <td>
                             <a href="modifier_produit.php?id=<?php echo $produit['id']; ?>" class="btn btn-edit">Modifier</a>
                             <a href="supprimer_produit.php?id=<?php echo $produit['id']; ?>" class="btn btn-delete" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')">Supprimer</a>
+                            <a href="ajouter_quantite.php?id=<?php echo $produit['id']; ?>" class="btn btn-add">Ajouter Quantité</a>
                             <a href="statistiques_produit.php?nom_produit=<?php echo urlencode($produit['nom_produit']); ?>" class="btn btn-statistics">Voir Statistiques</a>
                         </td>
                     </tr>
